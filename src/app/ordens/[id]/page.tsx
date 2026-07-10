@@ -1,11 +1,16 @@
 "use client";
 
-import { use, useMemo } from "react";
+import { use, useMemo, useState } from "react";
+import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
+import { ConfirmDialog } from "@/components/shared/ConfirmDialog";
 import { PageHeader } from "@/components/shared/PageHeader";
 import { useClientsList } from "@/features/clients/api";
 import { useItemsList } from "@/features/items/api";
-import { useOrderDetail } from "@/features/orders/api";
+import { useOrderDetail, useUpdateOrderStatus } from "@/features/orders/api";
 import { OrderStatusTimeline } from "@/features/orders/components/OrderStatusTimeline";
+import { getValidNextStatuses } from "@/features/orders/lib/status-machine";
+import { SALES_ORDER_STATUS_LABELS } from "@/features/orders/lib/status-labels";
 import { useTransportTypesList } from "@/features/transport-types/api";
 
 export default function OrderDetailPage({
@@ -18,6 +23,8 @@ export default function OrderDetailPage({
   const { data: clients = [] } = useClientsList();
   const { data: transportTypes = [] } = useTransportTypesList();
   const { data: items = [] } = useItemsList();
+  const updateOrderStatus = useUpdateOrderStatus();
+  const [confirmOpen, setConfirmOpen] = useState(false);
 
   const clientNameById = useMemo(
     () => new Map(clients.map((c) => [c.id, c.name])),
@@ -41,6 +48,8 @@ export default function OrderDetailPage({
     );
   }
 
+  const [nextStatus] = getValidNextStatuses(order.status);
+
   return (
     <>
       <PageHeader
@@ -48,7 +57,41 @@ export default function OrderDetailPage({
         description={`Cliente: ${clientNameById.get(order.clientId) ?? "-"} · Transporte: ${
           transportTypeNameById.get(order.transportTypeId) ?? "-"
         }`}
+        actions={
+          nextStatus && (
+            <Button
+              onClick={() => setConfirmOpen(true)}
+              disabled={updateOrderStatus.isPending}
+            >
+              Avançar para {SALES_ORDER_STATUS_LABELS[nextStatus]}
+            </Button>
+          )
+        }
       />
+
+      {nextStatus && (
+        <ConfirmDialog
+          open={confirmOpen}
+          onOpenChange={setConfirmOpen}
+          title="Confirmar transição de status"
+          description={`A ordem passará de "${SALES_ORDER_STATUS_LABELS[order.status]}" para "${SALES_ORDER_STATUS_LABELS[nextStatus]}".`}
+          confirmLabel="Confirmar"
+          onConfirm={() => {
+            updateOrderStatus
+              .mutateAsync({ id: order.id, status: nextStatus })
+              .then(() => {
+                toast.success("Status atualizado com sucesso");
+              })
+              .catch((error: unknown) => {
+                toast.error(
+                  error instanceof Error
+                    ? error.message
+                    : "Erro ao atualizar status"
+                );
+              });
+          }}
+        />
+      )}
 
       <div className="mb-6 overflow-x-auto py-4">
         <OrderStatusTimeline status={order.status} />
