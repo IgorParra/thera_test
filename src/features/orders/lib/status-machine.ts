@@ -1,6 +1,6 @@
 import type { SalesOrderStatus } from "../types";
 
-const ORDER: SalesOrderStatus[] = [
+export const SALES_ORDER_STATUS_SEQUENCE: SalesOrderStatus[] = [
   "CREATED",
   "PLANNED",
   "SCHEDULED",
@@ -11,8 +11,8 @@ const ORDER: SalesOrderStatus[] = [
 export function getValidNextStatuses(
   current: SalesOrderStatus
 ): SalesOrderStatus[] {
-  const index = ORDER.indexOf(current);
-  const next = ORDER[index + 1];
+  const index = SALES_ORDER_STATUS_SEQUENCE.indexOf(current);
+  const next = SALES_ORDER_STATUS_SEQUENCE[index + 1];
   return next ? [next] : [];
 }
 

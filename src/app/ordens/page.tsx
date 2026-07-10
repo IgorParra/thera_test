@@ -8,9 +8,9 @@ import { buttonVariants } from "@/components/ui/button";
 import { DataTable } from "@/components/shared/DataTable";
 import { EmptyState } from "@/components/shared/EmptyState";
 import { PageHeader } from "@/components/shared/PageHeader";
-import { StatusBadge } from "@/components/shared/StatusBadge";
 import { useClientsList } from "@/features/clients/api";
 import { useOrdersList, type OrdersListFilters } from "@/features/orders/api";
+import { OrderStatusTimeline } from "@/features/orders/components/OrderStatusTimeline";
 import { OrdersFiltersPanel } from "@/features/orders/components/OrdersFiltersPanel";
 import type { SalesOrder } from "@/features/orders/types";
 import { useTransportTypesList } from "@/features/transport-types/api";
@@ -61,7 +61,9 @@ export default function OrdersPage() {
       {
         id: "status",
         header: "Status",
-        cell: ({ row }) => <StatusBadge status={row.original.status} />,
+        cell: ({ row }) => (
+          <OrderStatusTimeline status={row.original.status} compact />
+        ),
       },
       {
         id: "createdAt",
