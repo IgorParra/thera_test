@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import { MSWProvider } from "@/mocks/MSWProvider";
 import { Providers } from "./providers";
 import { AppShell } from "@/components/layout/AppShell";
+import { Toaster } from "@/components/ui/sonner";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -34,6 +35,7 @@ export default function RootLayout({
         <MSWProvider>
           <Providers>
             <AppShell>{children}</AppShell>
+            <Toaster />
           </Providers>
         </MSWProvider>
       </body>
