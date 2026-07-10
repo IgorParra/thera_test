@@ -1,6 +1,6 @@
 export const ROUTES = {
   ordens: "/ordens",
-  scheduling: "/scheduling",
+  agendamento: "/agendamento",
   clientes: "/clientes",
   tiposTransporte: "/tipos-transporte",
   itens: "/itens",
