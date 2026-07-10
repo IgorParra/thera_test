@@ -6,7 +6,7 @@ export interface NavItem {
 }
 
 export const NAV_ITEMS: NavItem[] = [
-  { href: ROUTES.orders, label: "Ordens" },
+  { href: ROUTES.ordens, label: "Ordens" },
   { href: ROUTES.scheduling, label: "Agendamento" },
   { href: ROUTES.clientes, label: "Clientes" },
   { href: ROUTES.tiposTransporte, label: "Tipos de Transporte" },
