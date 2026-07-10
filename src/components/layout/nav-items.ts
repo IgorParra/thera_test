@@ -1,13 +1,15 @@
+import { ROUTES } from "@/lib/routes";
+
 export interface NavItem {
   href: string;
   label: string;
 }
 
 export const NAV_ITEMS: NavItem[] = [
-  { href: "/orders", label: "Ordens" },
-  { href: "/scheduling", label: "Agendamento" },
-  { href: "/clients", label: "Clientes" },
-  { href: "/transport-types", label: "Tipos de Transporte" },
-  { href: "/items", label: "Itens" },
-  { href: "/audit", label: "Auditoria" },
+  { href: ROUTES.orders, label: "Ordens" },
+  { href: ROUTES.scheduling, label: "Agendamento" },
+  { href: ROUTES.clientes, label: "Clientes" },
+  { href: ROUTES.tiposTransporte, label: "Tipos de Transporte" },
+  { href: ROUTES.itens, label: "Itens" },
+  { href: ROUTES.audit, label: "Auditoria" },
 ];
