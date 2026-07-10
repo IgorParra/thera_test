@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -18,6 +19,7 @@ export function ConfirmDialog({
   cancelLabel = "Cancelar",
   destructive = false,
   onConfirm,
+  children,
 }: {
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -27,6 +29,7 @@ export function ConfirmDialog({
   cancelLabel?: string;
   destructive?: boolean;
   onConfirm: () => void;
+  children?: ReactNode;
 }) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -35,6 +38,7 @@ export function ConfirmDialog({
           <DialogTitle>{title}</DialogTitle>
           {description && <DialogDescription>{description}</DialogDescription>}
         </DialogHeader>
+        {children}
         <DialogFooter>
           <DialogClose render={<Button variant="outline" />}>
             {cancelLabel}

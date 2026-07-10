@@ -10,6 +10,7 @@ import { PageHeader } from "@/components/shared/PageHeader";
 import { useClientsList } from "@/features/clients/api";
 import { useOrdersList } from "@/features/orders/api";
 import { OrderStatusTimeline } from "@/features/orders/components/OrderStatusTimeline";
+import { SchedulingConfirmDialog } from "@/features/orders/components/SchedulingConfirmDialog";
 import { SchedulingFormDialog } from "@/features/orders/components/SchedulingFormDialog";
 import type { SalesOrder } from "@/features/orders/types";
 import { useTransportTypesList } from "@/features/transport-types/api";
@@ -21,6 +22,7 @@ export default function SchedulingPage() {
   const { data: clients = [] } = useClientsList();
   const { data: transportTypes = [] } = useTransportTypesList();
   const [formOrder, setFormOrder] = useState<SalesOrder | undefined>();
+  const [confirmOrder, setConfirmOrder] = useState<SalesOrder | undefined>();
 
   const eligibleOrders = useMemo(
     () => orders.filter((order) => ELIGIBLE_STATUSES.includes(order.status)),
@@ -70,13 +72,20 @@ export default function SchedulingPage() {
         id: "actions",
         header: "Ações",
         cell: ({ row }) => (
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => setFormOrder(row.original)}
-          >
-            {row.original.scheduling ? "Reagendar" : "Definir agendamento"}
-          </Button>
+          <div className="flex gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setFormOrder(row.original)}
+            >
+              {row.original.scheduling ? "Reagendar" : "Definir agendamento"}
+            </Button>
+            {row.original.scheduling && !row.original.scheduling.confirmed && (
+              <Button size="sm" onClick={() => setConfirmOrder(row.original)}>
+                Confirmar
+              </Button>
+            )}
+          </div>
         ),
       },
     ],
@@ -105,6 +114,13 @@ export default function SchedulingPage() {
           open={Boolean(formOrder)}
           onOpenChange={(open) => !open && setFormOrder(undefined)}
           order={formOrder}
+        />
+      )}
+      {confirmOrder && (
+        <SchedulingConfirmDialog
+          open={Boolean(confirmOrder)}
+          onOpenChange={(open) => !open && setConfirmOrder(undefined)}
+          order={confirmOrder}
         />
       )}
     </>

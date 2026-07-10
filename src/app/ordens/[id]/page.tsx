@@ -11,6 +11,7 @@ import { useClientsList } from "@/features/clients/api";
 import { useItemsList } from "@/features/items/api";
 import { useOrderDetail, useUpdateOrderStatus } from "@/features/orders/api";
 import { OrderStatusTimeline } from "@/features/orders/components/OrderStatusTimeline";
+import { SchedulingConfirmDialog } from "@/features/orders/components/SchedulingConfirmDialog";
 import { getValidNextStatuses } from "@/features/orders/lib/status-machine";
 import { SALES_ORDER_STATUS_LABELS } from "@/features/orders/lib/status-labels";
 import { useTransportTypesList } from "@/features/transport-types/api";
@@ -31,6 +32,7 @@ export default function OrderDetailPage({
   });
   const updateOrderStatus = useUpdateOrderStatus();
   const [confirmOpen, setConfirmOpen] = useState(false);
+  const [schedulingConfirmOpen, setSchedulingConfirmOpen] = useState(false);
 
   const clientNameById = useMemo(
     () => new Map(clients.map((c) => [c.id, c.name])),
@@ -109,6 +111,40 @@ export default function OrderDetailPage({
           Atualizada em: {new Date(order.updatedAt).toLocaleString("pt-BR")}
         </span>
       </div>
+
+      <div className="mb-6 flex flex-col gap-2">
+        <h2 className="font-heading text-sm font-semibold">Agendamento</h2>
+        {order.scheduling ? (
+          <div className="flex items-center justify-between gap-2 rounded-lg border border-border p-3 text-sm">
+            <span>
+              {new Date(order.scheduling.deliveryDate).toLocaleDateString(
+                "pt-BR"
+              )}{" "}
+              · {order.scheduling.windowStart}–{order.scheduling.windowEnd}
+              {order.scheduling.confirmed && (
+                <span className="text-muted-foreground"> (confirmado)</span>
+              )}
+            </span>
+            {!order.scheduling.confirmed && (
+              <Button size="sm" onClick={() => setSchedulingConfirmOpen(true)}>
+                Confirmar agendamento
+              </Button>
+            )}
+          </div>
+        ) : (
+          <p className="text-sm text-muted-foreground">
+            Nenhum agendamento definido.
+          </p>
+        )}
+      </div>
+
+      {order.scheduling && (
+        <SchedulingConfirmDialog
+          open={schedulingConfirmOpen}
+          onOpenChange={setSchedulingConfirmOpen}
+          order={order}
+        />
+      )}
 
       <div className="flex flex-col gap-2">
         <h2 className="font-heading text-sm font-semibold">Itens</h2>
