@@ -68,15 +68,18 @@ export const schedulingHandlers = [
       }
 
       const body = (await request.json().catch(() => ({}))) as {
-        transitionToAgendada?: boolean;
+        transitionToScheduled?: boolean;
       };
 
       order.scheduling.confirmed = true;
 
       let statusTransitioned = false;
-      if (body.transitionToAgendada && canTransition(order.status, "AGENDADA")) {
+      if (
+        body.transitionToScheduled &&
+        canTransition(order.status, "SCHEDULED")
+      ) {
         const previousStatus = order.status;
-        order.status = "AGENDADA";
+        order.status = "SCHEDULED";
         statusTransitioned = true;
         addAuditEvent({
           entityType: "order",

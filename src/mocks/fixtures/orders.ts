@@ -11,18 +11,18 @@ import { listItems } from "./items";
 // Cycles through every status so the seed data exercises all 5 states,
 // weighted toward the earlier ones the way a real backlog would look.
 const STATUS_SEQUENCE: SalesOrderStatus[] = [
-  "CRIADA",
-  "CRIADA",
-  "PLANEJADA",
-  "PLANEJADA",
-  "PLANEJADA",
-  "AGENDADA",
-  "AGENDADA",
-  "AGENDADA",
-  "EM_TRANSPORTE",
-  "EM_TRANSPORTE",
-  "ENTREGUE",
-  "ENTREGUE",
+  "CREATED",
+  "CREATED",
+  "PLANNED",
+  "PLANNED",
+  "PLANNED",
+  "SCHEDULED",
+  "SCHEDULED",
+  "SCHEDULED",
+  "IN_TRANSIT",
+  "IN_TRANSIT",
+  "DELIVERED",
+  "DELIVERED",
 ];
 
 function randomItems(): SalesOrderItem[] {
@@ -55,12 +55,12 @@ function generateOrders(): SalesOrder[] {
     );
     const createdAt = faker.date.past({ years: 1 }).toISOString();
 
-    // Orders at AGENDADA+ have a confirmed schedule; one PLANEJADA order
+    // Orders at SCHEDULED+ have a confirmed schedule; one PLANNED order
     // also gets an unconfirmed one to represent a pending reschedule.
     let scheduling: Scheduling | undefined;
-    if (["AGENDADA", "EM_TRANSPORTE", "ENTREGUE"].includes(status)) {
+    if (["SCHEDULED", "IN_TRANSIT", "DELIVERED"].includes(status)) {
       scheduling = buildScheduling(true);
-    } else if (status === "PLANEJADA" && index === 4) {
+    } else if (status === "PLANNED" && index === 4) {
       scheduling = buildScheduling(false);
     }
 
@@ -97,7 +97,7 @@ export function createOrder(
   const order: SalesOrder = {
     ...input,
     id: `order-${nextId++}`,
-    status: "CRIADA",
+    status: "CREATED",
     createdAt: now,
     updatedAt: now,
   };

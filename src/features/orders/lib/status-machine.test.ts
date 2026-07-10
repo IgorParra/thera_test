@@ -3,17 +3,17 @@ import { canTransition, getValidNextStatuses } from "./status-machine";
 
 describe("status-machine", () => {
   it("allows the valid next transition", () => {
-    expect(canTransition("CRIADA", "PLANEJADA")).toBe(true);
-    expect(getValidNextStatuses("PLANEJADA")).toEqual(["AGENDADA"]);
+    expect(canTransition("CREATED", "PLANNED")).toBe(true);
+    expect(getValidNextStatuses("PLANNED")).toEqual(["SCHEDULED"]);
   });
 
   it("rejects skipping a step", () => {
-    expect(canTransition("CRIADA", "AGENDADA")).toBe(false);
-    expect(canTransition("PLANEJADA", "EM_TRANSPORTE")).toBe(false);
+    expect(canTransition("CREATED", "SCHEDULED")).toBe(false);
+    expect(canTransition("PLANNED", "IN_TRANSIT")).toBe(false);
   });
 
   it("rejects any transition from the final status", () => {
-    expect(getValidNextStatuses("ENTREGUE")).toEqual([]);
-    expect(canTransition("ENTREGUE", "CRIADA")).toBe(false);
+    expect(getValidNextStatuses("DELIVERED")).toEqual([]);
+    expect(canTransition("DELIVERED", "CREATED")).toBe(false);
   });
 });

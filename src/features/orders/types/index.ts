@@ -1,9 +1,9 @@
 export type SalesOrderStatus =
-  | "CRIADA"
-  | "PLANEJADA"
-  | "AGENDADA"
-  | "EM_TRANSPORTE"
-  | "ENTREGUE";
+  | "CREATED"
+  | "PLANNED"
+  | "SCHEDULED"
+  | "IN_TRANSIT"
+  | "DELIVERED";
 
 export interface SalesOrderItem {
   itemId: string;

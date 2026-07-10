@@ -1,11 +1,11 @@
 import type { SalesOrderStatus } from "../types";
 
 const ORDER: SalesOrderStatus[] = [
-  "CRIADA",
-  "PLANEJADA",
-  "AGENDADA",
-  "EM_TRANSPORTE",
-  "ENTREGUE",
+  "CREATED",
+  "PLANNED",
+  "SCHEDULED",
+  "IN_TRANSIT",
+  "DELIVERED",
 ];
 
 export function getValidNextStatuses(
