@@ -1,5 +1,5 @@
 export const ROUTES = {
-  orders: "/orders",
+  ordens: "/ordens",
   scheduling: "/scheduling",
   clientes: "/clientes",
   tiposTransporte: "/tipos-transporte",
