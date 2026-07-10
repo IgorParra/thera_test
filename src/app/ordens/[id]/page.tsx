@@ -5,6 +5,8 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { ConfirmDialog } from "@/components/shared/ConfirmDialog";
 import { PageHeader } from "@/components/shared/PageHeader";
+import { useAuditList } from "@/features/audit/api";
+import { describeAuditEvent } from "@/features/audit/lib/labels";
 import { useClientsList } from "@/features/clients/api";
 import { useItemsList } from "@/features/items/api";
 import { useOrderDetail, useUpdateOrderStatus } from "@/features/orders/api";
@@ -23,6 +25,10 @@ export default function OrderDetailPage({
   const { data: clients = [] } = useClientsList();
   const { data: transportTypes = [] } = useTransportTypesList();
   const { data: items = [] } = useItemsList();
+  const { data: auditEvents = [] } = useAuditList({
+    entityType: "order",
+    entityId: id,
+  });
   const updateOrderStatus = useUpdateOrderStatus();
   const [confirmOpen, setConfirmOpen] = useState(false);
 
@@ -125,6 +131,35 @@ export default function OrderDetailPage({
             );
           })}
         </div>
+      </div>
+
+      <div className="mt-6 flex flex-col gap-2">
+        <h2 className="font-heading text-sm font-semibold">
+          Log de auditoria
+        </h2>
+        {auditEvents.length === 0 ? (
+          <p className="text-sm text-muted-foreground">
+            Nenhum evento registrado ainda.
+          </p>
+        ) : (
+          <div className="rounded-lg border border-border">
+            {auditEvents.map((event) => {
+              const { label, transition } = describeAuditEvent(event);
+              return (
+                <div
+                  key={event.id}
+                  className="flex items-center justify-between gap-2 border-b border-border p-3 text-sm last:border-b-0"
+                >
+                  <span className="text-muted-foreground">
+                    {new Date(event.occurredAt).toLocaleString("pt-BR")}
+                  </span>
+                  <span>{label}</span>
+                  <span className="text-muted-foreground">{transition ?? "-"}</span>
+                </div>
+              );
+            })}
+          </div>
+        )}
       </div>
     </>
   );
