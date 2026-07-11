@@ -6,6 +6,12 @@ e auditoria. **Não há backend real** — todas as chamadas de API são interce
 [MSW](https://mswjs.io/), com dados de exemplo gerados de forma determinística
 (`@faker-js/faker` com seed fixa).
 
+> **Escopo desta entrega**: cobre o perfil **Front-end** do desafio (Sistema de Gestão de
+> Ordens de Venda). A spec permite explicitamente "a utilização de APIs simuladas
+> (mockadas)" para esse perfil — por isso não há serviço NestJS, banco de dados,
+> ORM (Prisma/TypeORM/Sequelize) nem `docker-compose.yml` neste repositório; esses itens
+> são requisito dos perfis Back-end/Full Stack, não deste.
+
 ## Como rodar
 
 ```bash
@@ -85,6 +91,14 @@ npm run build        # build de produção
   sem migração de schema; o custo é perder segurança de tipo no diff, compensado por um
   helper (`describeAuditEvent`, `src/features/audit/lib/labels.ts`) que interpreta cada
   `action` na hora de renderizar.
+- Dos 4 eventos mínimos de auditoria pedidos pela spec (criação, status, agendamento,
+  transporte), só 3 ocorrem na prática: **não existe "alteração de transporte"** porque
+  não há endpoint que edite o `transportTypeId` de uma ordem já criada — o transporte é
+  definido uma vez, na criação (`POST /api/orders`), e nunca mais muda. Não é uma lacuna
+  de implementação; é a ausência da própria mutação que geraria esse evento. Se essa
+  funcionalidade (reatribuir transporte pós-criação) for adicionada no futuro, o handler
+  correspondente só precisa seguir o mesmo padrão dos demais: mutar o campo e chamar
+  `addAuditEvent` com `previousState`/`nextState` do `transportTypeId`.
 - Itens são identificados pelo SKU como chave de negócio (unicidade validada na criação,
   `src/mocks/handlers/items.ts`), não só pelo id interno — reflete a regra de
   "identificador único (SKU)".
@@ -175,7 +189,20 @@ Query; se é só "o que o usuário está fazendo agora nesta tela", é Redux.
 - **Sem persistência real.** Os fixtures do MSW são arrays em memória — criar/editar
   qualquer coisa dura até o próximo reload completo da página.
 - **Sem autenticação/autorização.** Não existe login, sessão ou controle de permissão;
-  a aplicação assume um único usuário implícito com acesso a tudo.
+  a aplicação assume um único usuário implícito com acesso a tudo. Isso é uma escolha
+  consciente, não um esquecimento: a spec do desafio lista "estratégias de segurança e
+  autorização" como **diferencial** (opcional), não como requisito da Gestão de Ordens de
+  Venda, do Monitoramento, da Central de Agendamento ou dos Cadastros — e o próprio
+  documento reforça que "não é esperado que todos os diferenciais sejam implementados".
+  Priorizei tempo/escopo nas funcionalidades centrais (regras de negócio, fluxo de status,
+  agendamento, auditoria, testes) em vez de auth, dado esse enquadramento.
+  **Possível aprimoramento futuro**: com uma API real por trás (ver seção de migração
+  pra NestJS), o caminho natural seria autenticação via [Auth.js](https://authjs.dev/)
+  (NextAuth) ou um JWT emitido pelo backend guardado em cookie httpOnly, um
+  `middleware.ts` do Next protegendo as rotas de `src/app/**`, e um papel/permissão simples
+  associado ao usuário (ex. só quem tem papel de "logística" pode transicionar status ou
+  confirmar agendamento) — reaproveitando a própria estrutura de mutations já existente
+  em `src/features/*/api/index.ts` como ponto único onde anexar o header de autorização.
 - **Sem testes end-to-end de navegador.** A suíte (Vitest + Testing Library) cobre lógica
   pura, validação dos handlers mockados e um fluxo de integração de UI; não há
   Playwright/Cypress rodando num navegador de verdade.
