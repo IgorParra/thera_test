@@ -4,5 +4,5 @@ export const ROUTES = {
   clientes: "/clientes",
   tiposTransporte: "/tipos-transporte",
   itens: "/itens",
-  audit: "/audit",
+  auditoria: "/auditoria",
 } as const;
