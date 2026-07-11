@@ -38,22 +38,28 @@ function buildOrdersQueryString(filters: OrdersListFilters): string {
   return query ? `?${query}` : "";
 }
 
-export function useOrdersList(filters: OrdersListFilters = {}) {
-  return useQuery({
+export function ordersListOptions(filters: OrdersListFilters = {}) {
+  return queryOptions({
     queryKey: orderKeys.list(filters),
     queryFn: () =>
       apiFetch<SalesOrder[]>(`/api/orders${buildOrdersQueryString(filters)}`),
   });
 }
 
+export function useOrdersList(filters: OrdersListFilters = {}) {
+  return useQuery(ordersListOptions(filters));
+}
+
+export function orderDetailOptions(id: string) {
+  return queryOptions({
+    queryKey: orderKeys.detail(id),
+    queryFn: () => apiFetch<SalesOrder>(`/api/orders/${id}`),
+    enabled: !!id,
+  });
+}
+
 export function useOrderDetail(id: string) {
-  return useQuery(
-    queryOptions({
-      queryKey: orderKeys.detail(id),
-      queryFn: () => apiFetch<SalesOrder>(`/api/orders/${id}`),
-      enabled: !!id,
-    })
-  );
+  return useQuery(orderDetailOptions(id));
 }
 
 export interface CreateOrderInput {

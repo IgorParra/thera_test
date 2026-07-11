@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { queryOptions, useQuery } from "@tanstack/react-query";
 import { apiFetch } from "@/lib/http";
 import type { AuditEvent } from "../types";
 
@@ -21,10 +21,14 @@ function buildAuditQueryString(filters: AuditListFilters): string {
   return query ? `?${query}` : "";
 }
 
-export function useAuditList(filters: AuditListFilters = {}) {
-  return useQuery({
+export function auditListOptions(filters: AuditListFilters = {}) {
+  return queryOptions({
     queryKey: auditKeys.list(filters),
     queryFn: () =>
       apiFetch<AuditEvent[]>(`/api/audit${buildAuditQueryString(filters)}`),
   });
+}
+
+export function useAuditList(filters: AuditListFilters = {}) {
+  return useQuery(auditListOptions(filters));
 }

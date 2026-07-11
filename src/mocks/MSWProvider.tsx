@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, type ReactNode } from "react";
+import { useEffect, type ReactNode } from "react";
 
 async function enableMocking() {
   const { worker } = await import("./browser");
@@ -8,14 +8,10 @@ async function enableMocking() {
 }
 
 export function MSWProvider({ children }: { children: ReactNode }) {
-  const [ready, setReady] = useState(process.env.NODE_ENV !== "development");
-
   useEffect(() => {
     if (process.env.NODE_ENV !== "development") return;
-    enableMocking().then(() => setReady(true));
+    enableMocking();
   }, []);
-
-  if (!ready) return null;
 
   return <>{children}</>;
 }
