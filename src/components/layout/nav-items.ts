@@ -11,5 +11,5 @@ export const NAV_ITEMS: NavItem[] = [
   { href: ROUTES.clientes, label: "Clientes" },
   { href: ROUTES.tiposTransporte, label: "Tipos de Transporte" },
   { href: ROUTES.itens, label: "Itens" },
-  { href: ROUTES.audit, label: "Auditoria" },
+  { href: ROUTES.auditoria, label: "Auditoria" },
 ];
