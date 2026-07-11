@@ -5,24 +5,17 @@ import { getClientById } from "../fixtures/clients";
 import { getItemById } from "../fixtures/items";
 import { createOrder, getOrderById, listOrders, saveOrder } from "../fixtures/orders";
 import { addAuditEvent } from "../fixtures/audit";
+import { filterOrders } from "../lib/filter-orders";
 
 export const orderHandlers = [
   http.get("/api/orders", ({ request }) => {
     const params = new URL(request.url).searchParams;
-    const status = params.get("status");
-    const clientId = params.get("clientId");
-    const transportTypeId = params.get("transportTypeId");
-    const dateFrom = params.get("dateFrom");
-    const dateTo = params.get("dateTo");
-
-    const orders = listOrders().filter((order) => {
-      if (status && order.status !== status) return false;
-      if (clientId && order.clientId !== clientId) return false;
-      if (transportTypeId && order.transportTypeId !== transportTypeId)
-        return false;
-      if (dateFrom && order.createdAt < dateFrom) return false;
-      if (dateTo && order.createdAt > dateTo) return false;
-      return true;
+    const orders = filterOrders(listOrders(), {
+      status: (params.get("status") as SalesOrderStatus) ?? undefined,
+      clientId: params.get("clientId") ?? undefined,
+      transportTypeId: params.get("transportTypeId") ?? undefined,
+      dateFrom: params.get("dateFrom") ?? undefined,
+      dateTo: params.get("dateTo") ?? undefined,
     });
 
     return HttpResponse.json(orders);

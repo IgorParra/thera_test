@@ -12,7 +12,7 @@ export const clientKeys = {
   list: () => [...clientKeys.all, "list"] as const,
 };
 
-const clientsListOptions = queryOptions({
+export const clientsListOptions = queryOptions({
   queryKey: clientKeys.list(),
   queryFn: () => apiFetch<Client[]>("/api/clients"),
 });

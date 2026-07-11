@@ -7,7 +7,7 @@ import { Provider } from "react-redux";
 import { describe, expect, it } from "vitest";
 import { makeStore } from "@/lib/redux/store";
 import { setStatus } from "@/lib/redux/slices/orders-filter-slice";
-import OrdersPage from "./page";
+import { OrdersPageClient } from "./OrdersPageClient";
 
 function renderOrdersPage() {
   const queryClient = new QueryClient({
@@ -17,14 +17,14 @@ function renderOrdersPage() {
   const utils = render(
     <QueryClientProvider client={queryClient}>
       <Provider store={store}>
-        <OrdersPage />
+        <OrdersPageClient />
       </Provider>
     </QueryClientProvider>
   );
   return { ...utils, store };
 }
 
-describe("OrdersPage", () => {
+describe("OrdersPageClient", () => {
   it("lists all seeded orders by default, filters by status via Redux, and resets via the clear button", async () => {
     const { store } = renderOrdersPage();
 
