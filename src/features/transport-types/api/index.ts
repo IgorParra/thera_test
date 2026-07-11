@@ -12,7 +12,7 @@ export const transportTypeKeys = {
   list: () => [...transportTypeKeys.all, "list"] as const,
 };
 
-const transportTypesListOptions = queryOptions({
+export const transportTypesListOptions = queryOptions({
   queryKey: transportTypeKeys.list(),
   queryFn: () => apiFetch<TransportType[]>("/api/transport-types"),
 });

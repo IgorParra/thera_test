@@ -12,7 +12,7 @@ export const itemKeys = {
   list: (search?: string) => [...itemKeys.all, "list", search ?? ""] as const,
 };
 
-function itemsListOptions(search?: string) {
+export function itemsListOptions(search?: string) {
   return queryOptions({
     queryKey: itemKeys.list(search),
     queryFn: () =>
